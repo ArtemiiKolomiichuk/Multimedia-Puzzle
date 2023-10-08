@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Lever : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class Lever : MonoBehaviour
     [SerializeField] private bool isPulled = false;
     [SerializeField] private AnimationCurve extentCurve;
     [SerializeField] private float duration = 1f;
+    [SerializeField] UnityEvent onPulled;
+    [SerializeField] UnityEvent onPushed;
 
     private void Start()
     {
@@ -21,10 +24,12 @@ public class Lever : MonoBehaviour
         if(!isPulled)
         {
             StartCoroutine(MoveLever(Quaternion.Euler(-36, 0, 0)));
+            onPushed?.Invoke();
         }
         else
         {
             StartCoroutine(MoveLever(Quaternion.Euler(36, 0, 0)));
+            onPulled?.Invoke();
         }
     }
 
