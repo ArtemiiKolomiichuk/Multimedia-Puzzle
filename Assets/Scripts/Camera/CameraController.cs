@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance { get; private set; }
+
     private bool isMoving = false;
     private Vector3 initialPosition;
     private Quaternion initialRotation;
@@ -13,6 +15,7 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        Instance = this;
         initialPosition = transform.position;
         initialRotation = transform.rotation;
     }
@@ -29,7 +32,7 @@ public class CameraController : MonoBehaviour
     {
         if (!isMoving)
         {
-            if(!isInitialPosition)
+            if (!isInitialPosition)
             {
                 Debug.LogWarning("Camera is not in initial position");
                 StartCoroutine(MoveCameraCoroutine(initialPosition, initialRotation.eulerAngles));
@@ -62,6 +65,15 @@ public class CameraController : MonoBehaviour
 
         transform.SetPositionAndRotation(targetPos, Quaternion.Euler(targetRot));
         isInitialPosition = !isInitialPosition;
+        if (isInitialPosition)
+        {
+            var points = FindObjectsByType<FocusPoint>(FindObjectsSortMode.None);
+            foreach(var point in points)
+            {
+                point.EnablePoint();
+            }
+        }
+        Camera.main.GetComponent<CameraFocusUI>().EnableDisable();
         isMoving = false;
     }
 }
