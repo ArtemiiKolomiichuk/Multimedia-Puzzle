@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Mover : MonoBehaviour
+public class PlayerTilesMover : MonoBehaviour
 {
-    private Vector2 coordinates = new Vector2(3, 3);
+    private Vector2Int coordinates = new(3, 3);
     public void Move(int d)
     {
         Direction direction = (Direction)d;
@@ -36,7 +36,7 @@ public class Mover : MonoBehaviour
                 }
                 break;
         }
-        BoardBuilder.tiles[(int)coordinates.x, (int)coordinates.y].GetComponent<Tile>().Flip(direction);
+        BoardController.tiles[coordinates.x, coordinates.y].GetComponent<Tile>().Flip(direction);
     }
 
 }

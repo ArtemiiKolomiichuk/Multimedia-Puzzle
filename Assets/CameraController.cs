@@ -17,23 +17,31 @@ public class CameraController : MonoBehaviour
         initialRotation = transform.rotation;
     }
 
-    private void Update()
+    public void MoveCam()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isMoving)
+        if(!isMoving && !isInitialPosition)
         {
-            if(!isInitialPosition)
-            {
-                StartCoroutine(MoveCameraSmoothly(initialPosition, initialRotation.eulerAngles));
-            }
-            else
-            {
-                StartCoroutine(MoveCameraSmoothly(new Vector3(-107.895f,7.885f,21.755f), new Vector3(93.611f,-0.838f,-0.013f)));
-            }
-            isInitialPosition = !isInitialPosition;
+            StartCoroutine(MoveCameraCoroutine(initialPosition, initialRotation.eulerAngles));
         }
     }
 
-    private IEnumerator MoveCameraSmoothly(Vector3 targetPos, Vector3 targetRot)
+    public void MoveCam(Vector3 targetPos, Vector3 targetRot)
+    {
+        if (!isMoving)
+        {
+            if(!isInitialPosition)
+            {
+                Debug.LogWarning("Camera is not in initial position");
+                StartCoroutine(MoveCameraCoroutine(initialPosition, initialRotation.eulerAngles));
+            }
+            else
+            {
+                StartCoroutine(MoveCameraCoroutine(targetPos, targetRot));
+            }
+        }
+    }
+
+    private IEnumerator MoveCameraCoroutine(Vector3 targetPos, Vector3 targetRot)
     {
         isMoving = true;
 
@@ -46,14 +54,14 @@ public class CameraController : MonoBehaviour
         {
             trueTimePassed += Time.deltaTime;
             timePassed += Time.deltaTime * speed * speedCurve.Evaluate(trueTimePassed);
-            transform.position = Vector3.Lerp(initialPosition, targetPos, timePassed);
-            transform.rotation = Quaternion.Slerp(initialRotation, Quaternion.Euler(targetRot), timePassed);
+            transform.SetPositionAndRotation(
+                Vector3.Lerp(initialPosition, targetPos, timePassed), 
+                Quaternion.Slerp(initialRotation, Quaternion.Euler(targetRot), timePassed));
             yield return null;
         }
 
-        transform.position = targetPos;
-        transform.rotation = Quaternion.Euler(targetRot);
-
+        transform.SetPositionAndRotation(targetPos, Quaternion.Euler(targetRot));
+        isInitialPosition = !isInitialPosition;
         isMoving = false;
     }
 }
