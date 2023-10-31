@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,13 +13,40 @@ public class Tile : MonoBehaviour
     [SerializeField] private float flipDuration;
     [SerializeField] private Material secondMaterial;
 
+    [SerializeField] private Sprite[] onVisitedSprites;
+
+    [SerializeField] private bool flippable = true;
+    [SerializeField] private bool isOceanic = false;
+
     public void Flip(Direction direction, float duration = -1, float height = -1)
     {
+        if(!flippable)
+            return;
         if(duration == -1)
             duration = flipDuration;
         if(height == -1)
             height = yMax;
+        RotateUnderlyingImage(direction);
         StartCoroutine(FlipCoroutine(direction, duration, height));
+        flippable = false;
+    }
+
+    private void RotateUnderlyingImage(Direction direction)
+    {
+        if (transform.childCount < 2)
+        {
+            return;
+        }
+        if(direction == Direction.Left || direction == Direction.Right)
+        {
+            transform.GetComponentsInChildren<SpriteRenderer>()[1].flipY = true;
+            transform.GetComponentsInChildren<SpriteRenderer>()[1].flipX = true;
+            var s = transform.GetComponentsInChildren<SpriteRenderer>()[2];
+            s.sprite = onVisitedSprites[(isOceanic ? 0 : 1)];
+            s.flipY = true;
+            s.flipX = true;
+            s.transform.localPosition = new Vector3(-s.transform.localPosition.x, s.transform.localPosition.y, -s.transform.localPosition.z);
+        }        
     }
 
     private IEnumerator FlipCoroutine(Direction direction, float duration, float height)

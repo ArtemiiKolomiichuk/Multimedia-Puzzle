@@ -7,30 +7,27 @@ public class BoardController : MonoBehaviour
 {
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private Vector3 startPosition;
-    private float deltaX = 1.19f;
-    private float deltaZ = 1.19f;
     public static GameObject[,] tiles = new GameObject[7, 7];
 
-    void Start()
+    private void Start()
     {
-        for(int i = 0; i < 7; i++)
+        var children = transform.GetComponentsInChildren<Tile>();
+        for (int i = 0; i < 7; i++)
         {
             for(int j = 0; j < 7; j++)
             {
-                GameObject tile = Instantiate(tilePrefab, new Vector3(startPosition.x + deltaX * i, startPosition.y, startPosition.z + deltaZ * j), Quaternion.identity);
-                tile.transform.parent = gameObject.transform;
-                tiles[i, j] = tile;
+                tiles[i, j] = children[i * 7 + j].gameObject;
             }
         }
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             StartCoroutine(FlipBoardDiagonally());
         }
-        if(Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             StartCoroutine(FlipBoardFromCenter());
         }
