@@ -21,10 +21,8 @@ public class PlayerTilesMover : MonoBehaviour
         Direction direction = (Direction)d;
         var oldX = coordinates.x;
         var oldY = coordinates.y;
-        void Flip()
-        {
-            BoardController.tiles[oldX, oldY].GetComponent<Tile>().Flip(direction);
-        }
+        Action Flip = () => BoardController.tiles[oldX, oldY].GetComponent<Tile>().Flip(direction);
+
         switch (direction)
         {
             case Direction.Up:
@@ -51,6 +49,12 @@ public class PlayerTilesMover : MonoBehaviour
                     coordinates.x++;
                 }
                 break;
+        }
+
+        if(coordinates.x == oldX && coordinates.y == oldY)
+        {
+            //out of board, finish
+            return;
         }
         
         StartCoroutine(MovePlayer(

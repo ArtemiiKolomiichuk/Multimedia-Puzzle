@@ -13,10 +13,10 @@ public class Tile : MonoBehaviour
     [SerializeField] private float flipDuration;
     [SerializeField] private Material secondMaterial;
 
-    [SerializeField] private Sprite[] onVisitedSprites;
-
     [SerializeField] private bool flippable = true;
     [SerializeField] private bool isOceanic = false;
+
+    [NonSerialized] public Material intermidiateMaterial; 
 
     public void Flip(Direction direction, float duration = -1, float height = -1)
     {
@@ -26,27 +26,59 @@ public class Tile : MonoBehaviour
             duration = flipDuration;
         if(height == -1)
             height = yMax;
-        RotateUnderlyingImage(direction);
+        SetUnderlyingImage(direction);
         StartCoroutine(FlipCoroutine(direction, duration, height));
+        StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f));
         flippable = false;
     }
 
-    private void RotateUnderlyingImage(Direction direction)
+    private void SetUnderlyingImage(Direction direction)
     {
-        if (transform.childCount < 2)
+        if (transform.childCount != 1)
         {
             return;
         }
+        var bottomGO = Instantiate(transform.GetChild(0).gameObject, transform);
+        bottomGO.transform.localPosition = new Vector3(0, -0.51f, 0);
+        var bottom = bottomGO.GetComponent<SpriteRenderer>();
         if(direction == Direction.Left || direction == Direction.Right)
         {
-            transform.GetComponentsInChildren<SpriteRenderer>()[1].flipY = true;
-            transform.GetComponentsInChildren<SpriteRenderer>()[1].flipX = true;
-            var s = transform.GetComponentsInChildren<SpriteRenderer>()[2];
-            s.sprite = onVisitedSprites[(isOceanic ? 0 : 1)];
-            s.flipY = true;
-            s.flipX = true;
-            s.transform.localPosition = new Vector3(-s.transform.localPosition.x, s.transform.localPosition.y, -s.transform.localPosition.z);
-        }        
+            bottom.flipX = true;
+        }
+        else
+        {
+            bottom.flipY= true;
+        }
+        StartCoroutine(FadeImage(bottom));
+    }
+
+    IEnumerator FadeImage(SpriteRenderer spriteRenderer)
+    {
+        yield return new WaitForSeconds(0.6f);
+        float timePassed = 0f;
+        float duration = 0.5f;
+        float targetAlpha = 0.6f;
+        while (timePassed < 1)
+        {
+            timePassed += Time.deltaTime * 1/duration;
+            spriteRenderer.color = new Color(1, 1, 1, Mathf.Lerp(1, targetAlpha, timePassed));
+            yield return null;
+        }
+    }
+
+    IEnumerator LerpMaterialColor(Material intermidiateMaterial, Color targetColor, float duration)
+    {
+        intermidiateMaterial.color = GetComponent<MeshRenderer>().material.color;
+        var baseColor = intermidiateMaterial.color;
+        GetComponent<MeshRenderer>().material = intermidiateMaterial;
+        float timePassed = 0f;
+        while (timePassed < 1)
+        {
+            timePassed += Time.deltaTime * 1/duration;
+            intermidiateMaterial.color = Color.Lerp(baseColor, targetColor, timePassed);
+            yield return null;
+        }
+        this.GetComponent<MeshRenderer>().material = secondMaterial;
     }
 
     private IEnumerator FlipCoroutine(Direction direction, float duration, float height)
@@ -60,7 +92,6 @@ public class Tile : MonoBehaviour
                 Quaternion.Euler(NewRotation(direction, timePassed)));
             yield return null;
         }
-        GetComponent<MeshRenderer>().material = secondMaterial;
     }
 
     private Vector3 NewRotation(Direction direction, float timePassed)

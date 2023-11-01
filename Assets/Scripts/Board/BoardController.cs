@@ -7,6 +7,7 @@ public class BoardController : MonoBehaviour
 {
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private Vector3 startPosition;
+    [SerializeField] Material intermidiateMaterial;
     public static GameObject[,] tiles = new GameObject[7, 7];
 
     private void Start()
@@ -14,9 +15,10 @@ public class BoardController : MonoBehaviour
         var children = transform.GetComponentsInChildren<Tile>();
         for (int i = 0; i < 7; i++)
         {
-            for(int j = 0; j < 7; j++)
+            for (int j = 0; j < 7; j++)
             {
                 tiles[i, j] = children[i * 7 + j].gameObject;
+                tiles[i, j].GetComponent<Tile>().intermidiateMaterial = intermidiateMaterial;
             }
         }
     }
