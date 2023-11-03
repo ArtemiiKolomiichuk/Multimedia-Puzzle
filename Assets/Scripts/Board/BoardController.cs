@@ -10,6 +10,8 @@ public class BoardController : MonoBehaviour
     [SerializeField] Material intermidiateMaterial;
     [SerializeField] private Material greenMaterial;
     [SerializeField] private Material redMaterial;
+    [SerializeField] internal GameObject pin;
+    [SerializeField] internal Material[] pinMaterials;
     public static GameObject[,] tiles = new GameObject[7, 7];
 
     public static BoardController Instance { get; private set; } 
@@ -24,6 +26,7 @@ public class BoardController : MonoBehaviour
             {
                 tiles[i, j] = children[i * 7 + j].gameObject;
                 tiles[i, j].GetComponent<Tile>().intermidiateMaterial = intermidiateMaterial;
+                tiles[i, j].GetComponent<Tile>().coordinates = (i, j);
             }
         }
     }
@@ -39,7 +42,7 @@ public class BoardController : MonoBehaviour
             }
         }
         tileCoordinates.Sort((x, y) => Vector3.Distance(tiles[x.Item1,x.Item2].transform.position, tiles[3,3].transform.position) < Vector3.Distance(tiles[y.Item1,y.Item2].transform.position, tiles[3,3].transform.position) ? -1 : 1);
-
+        yield return new WaitForSeconds(1f);
         int counter = 0;
         StartCoroutine(LerpIntermidiateColor(correctlyMoved ? greenMaterial : redMaterial));
         foreach(var tileCoordinate in tileCoordinates)

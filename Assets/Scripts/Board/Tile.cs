@@ -17,10 +17,124 @@ public class Tile : MonoBehaviour
     [SerializeField] private bool isOceanic = false;
 
     [NonSerialized] public Material intermidiateMaterial;
+    private GameObject pin = null;
+    private int pinState = 0;
+    private bool isPinMoving = false;
+    internal (int, int) coordinates;
 
     private void Start()
     {
         firstMaterial = GetComponent<MeshRenderer>().material;
+    }
+
+    private void OnMouseDown()
+    {
+        if (isPinMoving)
+            return;
+        isPinMoving = true;
+        if (pin == null)
+        {
+            var pin = Instantiate(BoardController.Instance.pin);
+            this.pin = pin;
+            var newRotation = new Vector3(20.356f, -33.953f, -30.06f);
+            newRotation.z += 4.5667f * (coordinates.Item1 - 3);
+            newRotation.x -= 4.9667f * (coordinates.Item2 - 3);
+            pin.transform.localEulerAngles = newRotation;
+            StartCoroutine(MovePin(pin, true));
+        }
+        else
+        {
+            pinState++;
+            if (pinState == 3)
+            {
+                StartCoroutine(MovePin(pin, false, () => { Destroy(pin); this.pin = null; }));
+                pinState = 0;
+            }
+            else
+            {
+                pin.GetComponent<MeshRenderer>().material = BoardController.Instance.pinMaterials[pinState];
+                isPinMoving = false;
+            }
+        }
+    }
+
+    private void HidePin()
+    {
+        if (pin == null)
+            return;
+        StartCoroutine(MovePin(pin, false, () => { pin.SetActive(false); }));
+    }
+
+    private void ShowPin()
+    {
+        if (pin == null)
+            return;
+        pin.SetActive(true);
+        StartCoroutine(MovePin(pin, true));
+    }
+
+    const float pinDelta = 1.19f;
+
+    private IEnumerator MovePinForFlip()
+    {
+        if (pin == null)
+        {
+            yield break;
+        }
+        var duration = flipDuration * 1.2f;
+        duration /= 2;
+        var timePassed = 0f;
+        var startPos = new Vector3(-108.033f, -1.189f, 21.295f);
+        startPos.x += pinDelta * (coordinates.Item1 - 3);
+        startPos.z += pinDelta * (coordinates.Item2 - 3);
+        var endPos = new Vector3(-107.579f, 0.302f, 22.268f);
+        endPos.x += pinDelta * (coordinates.Item1 - 3);
+        endPos.z += pinDelta * (coordinates.Item2 - 3);
+        while (timePassed < duration)
+        {
+            timePassed += Time.deltaTime;
+            var t = timePassed / duration / 2;
+            pin.transform.localPosition = Vector3.Lerp(startPos, endPos, t/1.4f);
+            yield return null;
+        }
+        timePassed = 0f;
+        var newPos = pin.transform.localPosition;
+        
+        while (timePassed < duration)
+        {
+            timePassed += Time.deltaTime;
+            var t = timePassed / duration;
+            pin.transform.localPosition = Vector3.Lerp(newPos, startPos, t);
+            yield return null;
+        }
+
+    }
+
+    private IEnumerator MovePin(GameObject pin, bool put, Action callback = null)
+    {
+        var startPos = new Vector3(-108.033f, -1.189f, 21.295f);
+        startPos.x += pinDelta * (coordinates.Item1 - 3);
+        startPos.z += pinDelta * (coordinates.Item2 - 3);
+        var endPos = new Vector3(-107.579f, 0.302f, 22.268f);
+        endPos.x += pinDelta * (coordinates.Item1 - 3);
+        endPos.z += pinDelta * (coordinates.Item2 - 3);
+
+        if (put)
+        {
+            (endPos, startPos) = (startPos, endPos);
+        }
+
+        var duration = 0.12f;
+        var timePassed = 0f;
+        while (timePassed < duration)
+        {
+            timePassed += Time.deltaTime;
+            var t = timePassed / duration;
+            pin.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+            yield return null;
+        }
+        callback?.Invoke();
+        isPinMoving = false;
     }
 
     public void Flip(Direction direction, float duration = -1, float height = -1, Action callback = null)
@@ -36,6 +150,7 @@ public class Tile : MonoBehaviour
         if(height == -1)
             height = yMax;
         SetUnderlyingImage(direction);
+        StartCoroutine(MovePinForFlip());
         StartCoroutine(FlipCoroutine(direction, duration, height, callback));
         StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
         flipped = true;
@@ -43,6 +158,7 @@ public class Tile : MonoBehaviour
 
     public void ForceFlip(Direction direction, float duration = -1, float height = -1)
     {
+        HidePin();
         if (duration == -1)
             duration = flipDuration;
         if (height == -1)
@@ -87,6 +203,7 @@ public class Tile : MonoBehaviour
                 Quaternion.Lerp(baseRot, finalRot, rotCurve.Evaluate(timePassed)));
             yield return null;
         }
+        ShowPin();
     }
 
     private Vector3 ResetNewRotation(Direction direction)
@@ -165,13 +282,17 @@ public class Tile : MonoBehaviour
         float timePassed = 0f;
         while (timePassed < 1)
         {
+            if(timePassed > 0.2f)
+            {
+                callback?.Invoke();
+                callback = null;
+            }
             timePassed += Time.deltaTime * 1/duration;
             transform.SetLocalPositionAndRotation(
                 new Vector3(transform.localPosition.x, height * yCurve.Evaluate(timePassed) + baseY, transform.localPosition.z), 
                 Quaternion.Euler(NewRotation(direction, timePassed)));
             yield return null;
         }
-        callback?.Invoke();
     }
 
     private Vector3 NewRotation(Direction direction, float timePassed)
