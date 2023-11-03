@@ -10,18 +10,35 @@ public class PlayerTilesMover : MonoBehaviour
     [SerializeField] private GameObject player;
     private Vector3 playerBasePosition;
     [SerializeField] private float moveDuration = 0.4f;
+    internal static bool isMoving = false;
+
+    public static PlayerTilesMover Instance { get; private set; }
 
     private void Start()
     {
+        Instance = this;
         playerBasePosition = player.transform.localPosition;
+    }
+
+    public void ResetPlayer()
+    {
+        player.SetActive(true);
+        player.transform.localPosition = playerBasePosition;
+        coordinates = new Vector2Int(3, 3);
     }
 
     public void Move(int d)
     {  
+        if (isMoving)
+            return;
+        isMoving = true;
         Direction direction = (Direction)d;
         var oldX = coordinates.x;
         var oldY = coordinates.y;
-        Action Flip = () => BoardController.tiles[oldX, oldY].GetComponent<Tile>().Flip(direction);
+        void Flip()
+        {
+            BoardController.tiles[oldX, oldY].GetComponent<Tile>().Flip(direction, -1, -1, () => { isMoving = false; }); 
+        };
 
         switch (direction)
         {
@@ -51,9 +68,36 @@ public class PlayerTilesMover : MonoBehaviour
                 break;
         }
 
-        if(coordinates.x == oldX && coordinates.y == oldY)
+        if (coordinates.x == oldX && coordinates.y == oldY)
         {
-            //out of board, finish
+            var (x, y) = (0, 0);
+            switch (direction)
+            {
+                case Direction.Up:
+                    y = 1;
+                    break;
+                case Direction.Down:
+                    y = -1;
+                    break;
+                case Direction.Left:
+                    x = -1;
+                    break;
+                case Direction.Right:
+                    x = 1;
+                    break;
+            }
+            StartCoroutine(MovePlayer(
+                new Vector3(
+                    playerBasePosition.x + (coordinates.x + x*3 - 3) * 1.2f,
+                    playerBasePosition.y,
+                    playerBasePosition.z + (coordinates.y + y*3 - 3) * 1.2f
+                ),
+                () =>
+                {
+                    player.SetActive(false);
+                }
+            ));
+            StartCoroutine(BoardController.Instance.FlipBoardFromCenter(BoardController.CorrectlyMoved((coordinates.x, coordinates.y))));
             return;
         }
         

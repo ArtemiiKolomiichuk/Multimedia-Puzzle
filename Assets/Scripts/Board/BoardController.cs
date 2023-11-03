@@ -8,10 +8,15 @@ public class BoardController : MonoBehaviour
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private Vector3 startPosition;
     [SerializeField] Material intermidiateMaterial;
+    [SerializeField] private Material greenMaterial;
+    [SerializeField] private Material redMaterial;
     public static GameObject[,] tiles = new GameObject[7, 7];
+
+    public static BoardController Instance { get; private set; } 
 
     private void Start()
     {
+        Instance = this;
         var children = transform.GetComponentsInChildren<Tile>();
         for (int i = 0; i < 7; i++)
         {
@@ -23,19 +28,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            StartCoroutine(FlipBoardDiagonally());
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            StartCoroutine(FlipBoardFromCenter());
-        }
-    }
-
-    private IEnumerator FlipBoardFromCenter()
+    internal IEnumerator FlipBoardFromCenter(bool correctlyMoved)
     {
         var tileCoordinates = new List<(int, int)>();
         for(int i = 0; i < 7; i++)
@@ -48,16 +41,38 @@ public class BoardController : MonoBehaviour
         tileCoordinates.Sort((x, y) => Vector3.Distance(tiles[x.Item1,x.Item2].transform.position, tiles[3,3].transform.position) < Vector3.Distance(tiles[y.Item1,y.Item2].transform.position, tiles[3,3].transform.position) ? -1 : 1);
 
         int counter = 0;
+        StartCoroutine(LerpIntermidiateColor(correctlyMoved ? greenMaterial : redMaterial));
         foreach(var tileCoordinate in tileCoordinates)
         {
             counter++;
             var tile = tiles[tileCoordinate.Item1, tileCoordinate.Item2];
-            tile.GetComponent<Tile>().Flip(0, 1.3f - counter * 0.016f, 2 - counter*0.03f);
+            tile.GetComponent<Tile>().ForceFlip(0, 1.3f - counter * 0.016f, 2 - counter*0.03f);
             yield return new WaitForSeconds(0.02f);
+        }
+        if (correctlyMoved)
+        {
+            yield break;
+        }
+        yield return new WaitForSeconds(1.2f);
+        StartCoroutine(ResetFlipBoardDiagonally());
+    }
+
+    private IEnumerator LerpIntermidiateColor(Material material)
+    {
+        var duration = 1f;
+        intermidiateMaterial.color = new Color(0.8627f, 0.6156f, 0.203f);
+        var baseColor = intermidiateMaterial.color;
+        var targetColor = material.color;
+        float timePassed = 0f;
+        while (timePassed < 1)
+        {
+            timePassed += Time.deltaTime * 1 / duration;
+            intermidiateMaterial.color = Color.Lerp(baseColor, targetColor, timePassed);
+            yield return null;
         }
     }
 
-    private IEnumerator FlipBoardDiagonally()
+    private IEnumerator ResetFlipBoardDiagonally()
     {
         int boardSize = 7;
 
@@ -70,9 +85,54 @@ public class BoardController : MonoBehaviour
             {
                 int j = d - i;
                 var tile = tiles[i, j];
-                tile.GetComponent<Tile>().Flip(0, 1.3f, 2 - d * 0.02f);
+                tile.GetComponent<Tile>().ResetTile(0, 1.3f, 2 - d * 0.02f);
             }
             yield return new WaitForSeconds(0.12f);
         }
+        PlayerTilesMover.isMoving = false;
+        PlayerTilesMover.Instance.ResetPlayer();
+    }
+
+    private readonly static List<(int, int)> correctTiles = new()
+    {
+                                                (5, 6),
+                        (2, 5), (3, 5), (4, 5), (5, 5),
+                (1, 4),         (3, 4),
+                                        (4, 3), (5, 3),
+        (0, 2),         (2, 2), (3, 2), (4, 2),
+        (0, 1), (1, 1), (2, 1),         (4, 1), (5, 1),
+                                                (5, 0)
+    };
+
+    private readonly static List<(int, int)> incorrectTiles = new()
+    {
+        (0, 6), (1, 6), (2, 6), (3, 6), (4, 6),         (6, 6),
+        (0, 5), (1, 5),                                 (6, 5),
+        (0, 4),                         (4, 4), (5, 4), (6, 4),
+        (0, 3), (1, 3), (2, 3),                         (6, 3),
+                (1, 2),                         (5, 2), (6, 2),
+                                (3, 1),                 (6, 1),
+        (0, 0), (1, 0), (2, 0), (3, 0),                 (6, 0)
+    };
+
+    public static bool CorrectlyMoved((int,int) lastTile)
+    {
+        if(!lastTile.Equals((4,0)))
+        {
+            return false;
+        }
+        var visitedTiles = new List<(int, int)>();
+        for(int i = 0; i < 7; i++)
+        {
+            for(int j = 0; j < 7; j++)
+            {
+                if (tiles[i, j].GetComponent<Tile>().flipped)
+                {
+                    visitedTiles.Add((i, j));
+                }
+            }
+        }
+        return  visitedTiles.TrueForAll(tile => !incorrectTiles.Contains(tile)) &&
+                correctTiles.TrueForAll(tile => visitedTiles.Contains(tile));
     }
 }
