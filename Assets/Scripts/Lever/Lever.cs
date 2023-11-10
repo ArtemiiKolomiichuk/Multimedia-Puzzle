@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class Lever : MonoBehaviour
     void PullPush()
     {
         if(isMoving)
+            return;
+        if(isBroken)
             return;
         if(!isPulled)
         {
@@ -48,5 +51,23 @@ public class Lever : MonoBehaviour
 
         isPulled = !isPulled;
         isMoving = false;
+    }
+
+    private bool isBroken = false;
+    internal void BreakLever()
+    {
+        if (isBroken)
+            return;
+        isBroken = true;
+        isMoving = true;
+        onPulled = null;
+        onPushed = null;
+        transform.parent.GetComponent<LeverBody>().leverClicked = null;
+        //StartCoroutine(Break());
+    }
+
+    private IEnumerator Break()
+    {
+        throw new NotImplementedException();
     }
 }

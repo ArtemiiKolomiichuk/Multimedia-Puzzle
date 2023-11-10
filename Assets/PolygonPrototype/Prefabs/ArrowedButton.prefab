@@ -74,9 +74,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 23598962688517266, guid: beb162d963ca065489b61138f84de28d,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 1e75d51d555dec54b90544819dd5e13a, type: 2}
+      objectReference: {fileID: 2100000, guid: 237cf38cd5f49ed41b36548b81023d5c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -228,6 +228,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5798ba866861eaf47a2bca7f4367421c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
   curve:
     serializedVersion: 2
     m_Curve:
