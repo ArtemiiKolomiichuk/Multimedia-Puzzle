@@ -162,7 +162,7 @@ public class LampsController : MonoBehaviour
 
     IEnumerator CheckWinCoroutine()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.6f);
         foreach (var lamp in lamps)
         {
             lamp.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");

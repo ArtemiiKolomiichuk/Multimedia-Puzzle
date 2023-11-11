@@ -10554,7 +10554,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1720045518790498, guid: d48f60124060f8548b8a1868eb1885ad, type: 3}
       propertyPath: m_Name
-      value: Lamps (1)
+      value: Board
       objectReference: {fileID: 0}
     - target: {fileID: 4456284577342440, guid: d48f60124060f8548b8a1868eb1885ad, type: 3}
       propertyPath: m_LocalScale.x
@@ -17133,6 +17133,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   speed: 2
+  currentFocusPoint: 1
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22933,6 +22934,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPosition: {x: -108.43, y: 7.1123295, z: 21}
   cameraRotation: {x: 90, y: 0, z: 0}
+  focusPointType: 0
 --- !u!1 &1026911253
 GameObject:
   m_ObjectHideFlags: 0
@@ -24615,6 +24617,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d48f60124060f8548b8a1868eb1885ad, type: 3}
+--- !u!1 &1157349104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1157349106}
+  - component: {fileID: 1157349105}
+  m_Layer: 0
+  m_Name: VolumeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1157349105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157349104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 533ca8a97fa9b91418b8d7e6779c785a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  onVolumeChange:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &1157349106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157349104}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -107.793434, y: -16.517153, z: 21.733646}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1174007770
 GameObject:
   m_ObjectHideFlags: 0
@@ -32275,6 +32325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPosition: {x: -74.28802, y: 1.9510059, z: 35.86441}
   cameraRotation: {x: 3.8514247, y: 358.76254, z: -0.0044387844}
+  focusPointType: 1
 --- !u!65 &1470432636
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -52899,6 +52950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPosition: {x: -59.3289, y: 3.7877293, z: 26.64516}
   cameraRotation: {x: 14.680343, y: 34.51406, z: -0.0051957825}
+  focusPointType: 1
 --- !u!135 &1860547910
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -59985,6 +60037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPosition: {x: -114.52101, y: 7.947831, z: 18.090496}
   cameraRotation: {x: 10.898803, y: 316.8197, z: 359.9866}
+  focusPointType: 1
 --- !u!65 &2129716300
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -60387,3 +60440,4 @@ SceneRoots:
   - {fileID: 2074885075}
   - {fileID: 1575716950}
   - {fileID: 2005923174}
+  - {fileID: 1157349106}

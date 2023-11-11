@@ -8,6 +8,7 @@ public class FocusPoint : MonoBehaviour
     private Collider clickCollider;
     [SerializeField] private Vector3 cameraPosition;
     [SerializeField] private Vector3 cameraRotation;
+    public CameraController.FocusPointType focusPointType = CameraController.FocusPointType.Other;
 
     void Start()
     {
@@ -17,6 +18,7 @@ public class FocusPoint : MonoBehaviour
     private void OnMouseDown()
     {
         CameraController.Instance.MoveCam(cameraPosition, cameraRotation);
+        CameraController.Instance.currentFocusPoint = focusPointType;
         clickCollider.enabled = false;
     }
 

@@ -13,6 +13,14 @@ public class CameraController : MonoBehaviour
     [SerializeField] private AnimationCurve speedCurve;
     [SerializeField] private float speed = 1f;
 
+    public FocusPointType currentFocusPoint = FocusPointType.Other;
+
+    public enum FocusPointType
+    {
+        Board,
+        Other
+    }
+
     private void Start()
     {
         Instance = this;
