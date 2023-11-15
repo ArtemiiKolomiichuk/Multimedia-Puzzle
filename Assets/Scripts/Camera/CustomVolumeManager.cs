@@ -14,10 +14,6 @@ public class CustomVolumeManager : MonoBehaviour
     private void Awake()
     {
         onVolumeChange = new UnityEvent<float?>();
-    }
-
-    private void Start()
-    {
         Instance = this;
     }
 

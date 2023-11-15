@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RadioScript : MonoBehaviour
@@ -12,10 +14,18 @@ public class RadioScript : MonoBehaviour
     [SerializeField]
     GameObject text;
     private TextMeshProUGUI textMeshPro;
+    [SerializeField]
+    public int goodSong;
+    [SerializeField]
+    public int badSong;
+    [SerializeField]
+    public GameObject whiteNoiseObject;
+    private AudioSource whiteNoise;
     void Start()
     {
+        CustomVolumeManager.onVolumeChange.AddListener(ChangeVolume);
         audioSource = GetComponent<AudioSource>();
-        textMeshPro = text.GetComponent<TextMeshProUGUI>();
+        if(text!=null) textMeshPro = text.GetComponent<TextMeshProUGUI>();
         if (audioClips.Count > 0)
         {
             audioSource.clip = audioClips[0];
@@ -23,6 +33,8 @@ public class RadioScript : MonoBehaviour
         }
             
         audioSource.Stop();
+        whiteNoise = whiteNoiseObject.GetComponent<AudioSource>();
+        VolumeManagerChangeState();
     }
 
     // Update is called once per frame
@@ -31,6 +43,29 @@ public class RadioScript : MonoBehaviour
         if (!isStopped && !isPlaying() && audioClips.Count > 0)
         {
             isStopped = true;
+        }
+    }
+
+    private void ChangeVolume(float? x)
+    {
+        if (clipNum == goodSong || clipNum == badSong)
+        {
+            if (x == null)
+            {
+                audioSource.volume = 0;
+                if (!isStopped) whiteNoise.volume = 0.1f;
+                else whiteNoise.volume = 0;
+            }
+            else
+            {
+                audioSource.volume = (float)x;
+                whiteNoise.volume = 1.2f*(1 - (float)x)/10;
+            }
+        }
+        else
+        {
+            audioSource.volume = 1;
+            whiteNoise.volume = 0;
         }
     }
 
@@ -65,6 +100,8 @@ public class RadioScript : MonoBehaviour
             isStopped = false;
             resetName();
         }
+        VolumeManagerChangeState();
+        if (CustomVolumeManager.Instance.state == CustomVolumeManager.ManagerState.Off) audioSource.volume = 1;
     }
 
     public void Next()
@@ -77,11 +114,19 @@ public class RadioScript : MonoBehaviour
             isStopped = false;
             resetName();
         }
+        VolumeManagerChangeState();
+        if (CustomVolumeManager.Instance.state == CustomVolumeManager.ManagerState.Off) audioSource.volume = 1;
     }
 
+    public void VolumeManagerChangeState()
+    {
+        if (clipNum == goodSong) CustomVolumeManager.Instance.state = CustomVolumeManager.ManagerState.Good;
+        else if (clipNum == badSong) CustomVolumeManager.Instance.state = CustomVolumeManager.ManagerState.Bad;
+        else CustomVolumeManager.Instance.state = CustomVolumeManager.ManagerState.Off;
+    }
     private void resetName()
     {
-        textMeshPro.text = audioSource.clip.name;
+        if(textMeshPro!=null) textMeshPro.text = audioSource.clip.name;
     }
 
     private bool isPlaying()
