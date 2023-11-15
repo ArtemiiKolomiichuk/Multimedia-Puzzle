@@ -139,6 +139,7 @@ public class Tile : MonoBehaviour
 
     public void Flip(Direction direction, float duration = -1, float height = -1, Action callback = null)
     {
+        
         if (flipped)
         {
             callback?.Invoke();
@@ -152,8 +153,39 @@ public class Tile : MonoBehaviour
         SetUnderlyingImage(direction);
         StartCoroutine(MovePinForFlip());
         StartCoroutine(FlipCoroutine(direction, duration, height, callback));
-        StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
+        if(coordinates == (3, 3))
+        {
+            Debug.Log(coordinates);
+            StartCoroutine(LerpMaterialFully(intermidiateMaterial, secondMaterial.color, 0.8f, secondMaterial));
+        }
+        else
+        {
+            StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
+        }
+        
         flipped = true;
+    }
+
+    private IEnumerator LerpMaterialFully(Material intermidiateMaterial, Color color, float duration, Material secondMaterial)
+    {
+        var goalSmoothness = secondMaterial.GetFloat("_Smoothness");
+        var goalMettalic = secondMaterial.GetFloat("_Metallic");
+        var baseColor = GetComponent<MeshRenderer>().material.color;
+        var goalColor = secondMaterial.color;
+        var timePassed = 0f;
+        intermidiateMaterial.color = baseColor;
+        this.GetComponent<MeshRenderer>().material = intermidiateMaterial;
+        while (timePassed < 1)
+        {
+            timePassed += Time.deltaTime * 1/duration;
+            intermidiateMaterial.SetFloat("_Smoothness", Mathf.Lerp(0, goalSmoothness, timePassed));
+            intermidiateMaterial.SetFloat("_Metallic", Mathf.Lerp(0, goalMettalic, timePassed));
+            intermidiateMaterial.color = Color.Lerp(baseColor, goalColor, timePassed);
+            yield return null;
+        }
+        this.GetComponent<MeshRenderer>().material = secondMaterial;
+        intermidiateMaterial.SetFloat("_Smoothness", 0);
+        intermidiateMaterial.SetFloat("_Metallic", 0);
     }
 
     public void ForceFlip(Direction direction, float duration = -1, float height = -1)
