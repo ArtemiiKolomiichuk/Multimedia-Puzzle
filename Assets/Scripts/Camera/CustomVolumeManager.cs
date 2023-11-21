@@ -5,6 +5,7 @@ public class CustomVolumeManager : MonoBehaviour
 {
     private readonly Vector3 goodTilePosition = new(-106.05f, -1.54f, 20.92f);
     private readonly Vector3 badTilePosition = new(-109.62f, -1.54f, 24.49f);
+    [SerializeField] private AnimationCurve volumeCurve;
 
     public ManagerState state = ManagerState.Off;
     public static UnityEvent<float?> onVolumeChange;
@@ -54,7 +55,7 @@ public class CustomVolumeManager : MonoBehaviour
             {
                 volume = 0;
             }
-            onVolumeChange.Invoke(volume);
+            onVolumeChange.Invoke(volumeCurve.Evaluate(volume));
             return;
         }
         onVolumeChange.Invoke(null);

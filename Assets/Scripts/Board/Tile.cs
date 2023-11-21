@@ -155,14 +155,12 @@ public class Tile : MonoBehaviour
         StartCoroutine(FlipCoroutine(direction, duration, height, callback));
         if(coordinates == (3, 3))
         {
-            Debug.Log(coordinates);
             StartCoroutine(LerpMaterialFully(intermidiateMaterial, secondMaterial.color, 0.8f, secondMaterial));
         }
         else
         {
             StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
         }
-        
         flipped = true;
     }
 
