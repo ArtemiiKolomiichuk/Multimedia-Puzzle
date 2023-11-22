@@ -43,7 +43,7 @@ public class CameraController : MonoBehaviour
             if (!isInitialPosition)
             {
                 Debug.LogWarning("Camera is not in initial position");
-                StartCoroutine(MoveCameraCoroutine(initialPosition, initialRotation.eulerAngles));
+                //StartCoroutine(MoveCameraCoroutine(initialPosition, initialRotation.eulerAngles));
             }
             else
             {
