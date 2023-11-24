@@ -13,14 +13,14 @@ public class Tile : MonoBehaviour
     [SerializeField] private float flipDuration;
     [SerializeField] private Material secondMaterial;
                      private Material firstMaterial;
-    [SerializeField] internal bool flipped = false;
+    [SerializeField] public bool flipped = false;
     [SerializeField] private bool isOceanic = false;
 
     [NonSerialized] public Material intermidiateMaterial;
     private GameObject pin = null;
     private int pinState = 0;
     private bool isPinMoving = false;
-    internal (int, int) coordinates;
+    public (int, int) coordinates;
 
     private void Start()
     {
@@ -139,7 +139,6 @@ public class Tile : MonoBehaviour
 
     public void Flip(Direction direction, float duration = -1, float height = -1, Action callback = null)
     {
-        
         if (flipped)
         {
             callback?.Invoke();
@@ -161,6 +160,7 @@ public class Tile : MonoBehaviour
         {
             StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
         }
+        GetComponent<AudioSource>().Play();
         flipped = true;
     }
 

@@ -20,6 +20,7 @@ public class Button3D : MonoBehaviour
 
     private void AnimateClick()
     {
+        transform.parent.GetComponent<AudioSource>().Play();
         isAnimating = true;
         StartCoroutine(AnimateClickCoroutine());
     }

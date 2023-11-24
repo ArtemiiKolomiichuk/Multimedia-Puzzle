@@ -24,6 +24,7 @@ public class Lever : MonoBehaviour
             return;
         if(isBroken)
             return;
+        transform.parent.GetComponent<AudioSource>().Play();
         if(!isPulled)
         {
             StartCoroutine(MoveLever(Quaternion.Euler(-36, 0, 0)));
@@ -54,7 +55,7 @@ public class Lever : MonoBehaviour
     }
 
     private bool isBroken = false;
-    internal void BreakLever()
+    public void BreakLever()
     {
         if (isBroken)
             return;
