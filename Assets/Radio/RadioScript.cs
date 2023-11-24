@@ -43,6 +43,7 @@ public class RadioScript : MonoBehaviour
         if (!isStopped && !isPlaying() && audioClips.Count > 0)
         {
             isStopped = true;
+            whiteNoise.volume = 0;
         }
     }
 
@@ -59,7 +60,8 @@ public class RadioScript : MonoBehaviour
             else
             {
                 audioSource.volume = (float)x;
-                whiteNoise.volume = 1.2f*(1 - (float)x)/10;
+                if (!isStopped) whiteNoise.volume = 1.2f*(1 - (float)x)/10;
+                else whiteNoise.volume = 0;
             }
         }
         else

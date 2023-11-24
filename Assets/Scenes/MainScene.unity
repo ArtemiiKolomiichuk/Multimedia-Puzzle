@@ -27321,7 +27321,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -67007,6 +67007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42565b5013c601048890dd657aef361a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coordinates: {x: 3, y: 3}
   player: {fileID: 1238857952}
   moveDuration: 0.44
 --- !u!114 &2005923173
@@ -67322,6 +67323,7 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: 6f9f2e44aeda6ac44990528f997168dd, type: 3}
   - {fileID: 8300000, guid: 6b5ab4a684a62af4195b2d195157f0ee, type: 3}
+  - {fileID: 8300000, guid: 07eb83dd9e0ac9d4fa8d5fabb5916e77, type: 3}
   text: {fileID: 0}
   goodSong: 0
   badSong: 1
