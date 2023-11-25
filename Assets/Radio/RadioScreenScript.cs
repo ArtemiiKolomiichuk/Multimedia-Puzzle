@@ -24,15 +24,15 @@ public class RadioScreenScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (radioScript.isStopped && stopObject.transform.localScale.x == 0)
-        {
-            stopObject.transform.localScale = Vector3.one;
-            playObject.transform.localScale = Vector3.zero;
-        }
-        else if (!radioScript.isStopped && !(stopObject.transform.localScale.x == 0))
+        if (radioScript.isStopped && playObject.transform.localScale.x == 0)
         {
             stopObject.transform.localScale = Vector3.zero;
             playObject.transform.localScale = Vector3.one;
+        }
+        else if (!radioScript.isStopped && !(playObject.transform.localScale.x == 0))
+        {
+            stopObject.transform.localScale = Vector3.one;
+            playObject.transform.localScale = Vector3.zero;
         }
         if(clipNum != radioScript.clipNum) text.text = radioScript.audioClips[radioScript.clipNum].name;
         clipNum = radioScript.clipNum;
