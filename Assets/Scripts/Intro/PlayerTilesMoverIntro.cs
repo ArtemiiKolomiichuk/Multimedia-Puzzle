@@ -85,14 +85,9 @@ public class PlayerTilesMoverIntro : MonoBehaviour
                     x = 1;
                     break;
             }
-            StartCoroutine(MovePlayer(
-                positions[coordinates.y, coordinates.x],
-                () =>
-                {
-                    player.SetActive(false);
-                }
-            ));
-            StartCoroutine(BoardControllerIntro.Instance.FlipBoardFromCenter(BoardControllerIntro.CorrectlyMoved((coordinates.x, coordinates.y))));
+            player.SetActive(false);
+            Flip();
+            StartCoroutine(BoardControllerIntro.Instance.FlipBoardFromCenter(BoardControllerIntro.CorrectlyMoved((coordinates.x, coordinates.y), direction)));
             return;
         }
 

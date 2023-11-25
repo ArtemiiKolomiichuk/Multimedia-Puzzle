@@ -22,6 +22,9 @@ public class Tile : MonoBehaviour
     private bool isPinMoving = false;
     public (int, int) coordinates;
 
+    public AudioClip pinAudio;
+    public AudioClip tileAudio;
+
     private void Start()
     {
         firstMaterial = GetComponent<MeshRenderer>().material;
@@ -40,6 +43,8 @@ public class Tile : MonoBehaviour
             newRotation.z += 4.5667f * (coordinates.Item1 - 3);
             newRotation.x -= 4.9667f * (coordinates.Item2 - 3);
             pin.transform.localEulerAngles = newRotation;
+            GetComponent<AudioSource>().clip = pinAudio;
+            GetComponent<AudioSource>().Play();
             StartCoroutine(MovePin(pin, true));
         }
         else
@@ -47,6 +52,8 @@ public class Tile : MonoBehaviour
             pinState++;
             if (pinState == 3)
             {
+                GetComponent<AudioSource>().clip = pinAudio;
+                GetComponent<AudioSource>().Play();
                 StartCoroutine(MovePin(pin, false, () => { Destroy(pin); this.pin = null; }));
                 pinState = 0;
             }
@@ -70,6 +77,8 @@ public class Tile : MonoBehaviour
         if (pin == null)
             return;
         pin.SetActive(true);
+        GetComponent<AudioSource>().clip = pinAudio;
+        GetComponent<AudioSource>().Play();
         StartCoroutine(MovePin(pin, true));
     }
 
@@ -151,7 +160,7 @@ public class Tile : MonoBehaviour
             height = yMax;
         SetUnderlyingImage(direction);
         StartCoroutine(MovePinForFlip());
-        StartCoroutine(FlipCoroutine(direction, duration, height, callback));
+        StartCoroutine(FlipCoroutine(direction, duration, height, callback, false));
         if(coordinates == (3, 3))
         {
             StartCoroutine(LerpMaterialFully(intermidiateMaterial, secondMaterial.color, 0.8f, secondMaterial));
@@ -307,8 +316,12 @@ public class Tile : MonoBehaviour
         this.GetComponent<MeshRenderer>().material = newMaterial;
     }
 
-    private IEnumerator FlipCoroutine(Direction direction, float duration, float height, Action callback = null)
+    private IEnumerator FlipCoroutine(Direction direction, float duration, float height, Action callback = null, bool silently = true)
     {
+        if(!silently){
+            GetComponent<AudioSource>().clip = tileAudio;
+            GetComponent<AudioSource>().Play();
+        }
         float timePassed = 0f;
         while (timePassed < 1)
         {

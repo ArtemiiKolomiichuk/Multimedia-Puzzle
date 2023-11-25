@@ -11,6 +11,9 @@ public class LampsController : MonoBehaviour
     [SerializeField] private Material lampOff;
     [SerializeField] private Lever[] levers;
 
+    [SerializeField] private AudioClip explosionSound;
+    [SerializeField] private AudioClip shockSound;
+
     public static LampsController Instance { get; private set; }
 
     private void Awake()
@@ -162,7 +165,12 @@ public class LampsController : MonoBehaviour
 
     IEnumerator CheckWinCoroutine()
     {
+        yield return new WaitForSeconds(0.2f);
+        GetComponent<AudioSource>().clip = shockSound;
+        GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(0.6f);
+        GetComponent<AudioSource>().clip = explosionSound;
+        GetComponent<AudioSource>().Play();
         foreach (var lamp in lamps)
         {
             lamp.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");

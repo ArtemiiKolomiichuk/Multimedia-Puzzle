@@ -44,6 +44,10 @@ public class BoardControllerIntro : MonoBehaviour
         tileCoordinates.Sort((x, y) => Vector3.Distance(tiles[x.Item1, x.Item2].transform.position, tiles[1, 1].transform.position) < Vector3.Distance(tiles[y.Item1, y.Item2].transform.position, tiles[1, 1].transform.position) ? -1 : 1);
         yield return new WaitForSeconds(1f);
         int counter = 0;
+        if (!correctlyMoved)
+        {
+            GetComponent<AudioSource>().Play();
+        }
         StartCoroutine(LerpIntermidiateColor(correctlyMoved ? greenMaterial : redMaterial));
         foreach (var tileCoordinate in tileCoordinates)
         {
@@ -95,6 +99,7 @@ public class BoardControllerIntro : MonoBehaviour
             yield return new WaitForSeconds(0.12f);
         }
         PlayerTilesMoverIntro.isMoving = false;
+        yield return new WaitForSeconds(1.2f);
         PlayerTilesMoverIntro.Instance.ResetPlayer();
     }
 
@@ -111,9 +116,9 @@ public class BoardControllerIntro : MonoBehaviour
         (0, 0)
     };
 
-    public static bool CorrectlyMoved((int, int) lastTile)
+    public static bool CorrectlyMoved((int, int) lastTile, Direction direction)
     {
-        if (!lastTile.Equals((2, 0)))
+        if (!lastTile.Equals((2, 0)) || direction != Direction.Right)
         {
             return false;
         }

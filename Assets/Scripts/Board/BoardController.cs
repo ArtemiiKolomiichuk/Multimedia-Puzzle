@@ -43,6 +43,10 @@ public class BoardController : MonoBehaviour
         }
         tileCoordinates.Sort((x, y) => Vector3.Distance(tiles[x.Item1,x.Item2].transform.position, tiles[3,3].transform.position) < Vector3.Distance(tiles[y.Item1,y.Item2].transform.position, tiles[3,3].transform.position) ? -1 : 1);
         yield return new WaitForSeconds(1f);
+        if(!correctlyMoved)
+        {
+            GetComponent<AudioSource>().Play();
+        }
         int counter = 0;
         StartCoroutine(LerpIntermidiateColor(correctlyMoved ? greenMaterial : redMaterial));
         foreach(var tileCoordinate in tileCoordinates)
