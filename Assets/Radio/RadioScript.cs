@@ -1,15 +1,13 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class RadioScript : MonoBehaviour
 {
     [SerializeField]
     public List<AudioClip> audioClips;
-    int clipNum = 0;
-    bool isStopped = true;
+    public int clipNum = 0;
+    public bool isStopped = true;
     private AudioSource audioSource;
     [SerializeField]
     GameObject text;
@@ -43,6 +41,7 @@ public class RadioScript : MonoBehaviour
         if (!isStopped && !isPlaying() && audioClips.Count > 0)
         {
             isStopped = true;
+            audioSource.Pause();
             whiteNoise.volume = 0;
         }
     }
@@ -77,10 +76,6 @@ public class RadioScript : MonoBehaviour
         {
             if (isStopped)
             {
-                if (!isPlaying())
-                {
-                    audioSource.Stop();
-                }
                 audioSource.Play();
             }
             else
@@ -99,7 +94,8 @@ public class RadioScript : MonoBehaviour
             if (clipNum == 0) clipNum = audioClips.Count;
             clipNum--;
             audioSource.clip = audioClips[clipNum];
-            isStopped = false;
+            isStopped = true;
+            whiteNoise.volume = 0;
             resetName();
         }
         VolumeManagerChangeState();
@@ -113,7 +109,8 @@ public class RadioScript : MonoBehaviour
             clipNum++;
             if (clipNum == audioClips.Count) clipNum = 0;
             audioSource.clip = audioClips[clipNum];
-            isStopped = false;
+            isStopped = true;
+            whiteNoise.volume = 0;
             resetName();
         }
         VolumeManagerChangeState();
