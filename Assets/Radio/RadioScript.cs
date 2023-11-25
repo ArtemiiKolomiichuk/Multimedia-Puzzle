@@ -98,6 +98,7 @@ public class RadioScript : MonoBehaviour
             whiteNoise.volume = 0;
             resetName();
         }
+        StopOrPlay();
         VolumeManagerChangeState();
         if (CustomVolumeManager.Instance.state == CustomVolumeManager.ManagerState.Off) audioSource.volume = 1;
     }
@@ -113,6 +114,7 @@ public class RadioScript : MonoBehaviour
             whiteNoise.volume = 0;
             resetName();
         }
+        StopOrPlay();
         VolumeManagerChangeState();
         if (CustomVolumeManager.Instance.state == CustomVolumeManager.ManagerState.Off) audioSource.volume = 1;
     }

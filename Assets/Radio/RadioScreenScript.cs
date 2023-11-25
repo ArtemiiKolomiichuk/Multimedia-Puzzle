@@ -13,10 +13,12 @@ public class RadioScreenScript : MonoBehaviour
     [SerializeField]
     public GameObject textObject;
     private TextMeshProUGUI text;
+    int clipNum = -1;
     void Start()
     {
         radioScript = radio.GetComponent<RadioScript>();
         text = textObject.GetComponent<TextMeshProUGUI>();
+        if(radioScript.audioClips != null) text.text = radioScript.audioClips[radioScript.clipNum].name;
     }
 
     // Update is called once per frame
@@ -31,7 +33,8 @@ public class RadioScreenScript : MonoBehaviour
         {
             stopObject.transform.localScale = Vector3.zero;
             playObject.transform.localScale = Vector3.one;
-            text.text = radioScript.audioClips[radioScript.clipNum].name;
         }
+        if(clipNum != radioScript.clipNum) text.text = radioScript.audioClips[radioScript.clipNum].name;
+        clipNum = radioScript.clipNum;
     }
 }
