@@ -34,7 +34,7 @@ public class RadioScreenScript : MonoBehaviour
             stopObject.transform.localScale = Vector3.one;
             playObject.transform.localScale = Vector3.zero;
         }
-        if(clipNum != radioScript.clipNum) text.text = radioScript.audioClips[radioScript.clipNum].name;
+        if(clipNum != radioScript.clipNum) text.text = radioScript.songTitles[radioScript.clipNum];
         clipNum = radioScript.clipNum;
     }
 }

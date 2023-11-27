@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BoardController : MonoBehaviour
 {
@@ -58,6 +59,18 @@ public class BoardController : MonoBehaviour
         }
         if (correctlyMoved)
         {
+            yield return new WaitForSeconds(0.4f);
+            var sprite = Camera.main.transform.GetComponentInChildren<SpriteRenderer>();
+            float timer = 0;
+            while (timer < 1)
+            {
+                timer += Time.deltaTime;
+                sprite.color = new Color(0, 0, 0, timer);
+                yield return null;
+            }
+            sprite.color = new Color(0, 0, 0, 1);
+            yield return new WaitForSeconds(0.3f);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             yield break;
         }
         yield return new WaitForSeconds(1.2f);
@@ -113,7 +126,7 @@ public class BoardController : MonoBehaviour
 
     private readonly static List<(int, int)> incorrectTiles = new()
     {
-        (0, 6), (1, 6), (2, 6), (3, 6), (4, 6),         (6, 6),
+        (0, 6), (1, 6), (2, 6), (3, 6),                 (6, 6),
         (0, 5), (1, 5),                                 (6, 5),
         (0, 4),                         (4, 4), (5, 4), (6, 4),
         (0, 3), (1, 3), (2, 3),                         (6, 3),
@@ -140,6 +153,6 @@ public class BoardController : MonoBehaviour
             }
         }
         return  visitedTiles.TrueForAll(tile => !incorrectTiles.Contains(tile)) &&
-                correctTiles.TrueForAll(tile => visitedTiles.Contains(tile));
+                correctTiles.TrueForAll(tile => visitedTiles.Contains(tile) || tile == (4,6));
     }
 }

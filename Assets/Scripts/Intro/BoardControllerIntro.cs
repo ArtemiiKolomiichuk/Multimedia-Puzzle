@@ -58,7 +58,17 @@ public class BoardControllerIntro : MonoBehaviour
         }
         if (correctlyMoved)
         {
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(0.4f);
+            var sprite = Camera.main.transform.GetComponentInChildren<SpriteRenderer>();
+            float timer = 0;
+            while (timer < 1)
+            {
+                timer += Time.deltaTime;
+                sprite.color = new Color(0, 0, 0, timer);
+                yield return null;
+            }
+            sprite.color = new Color(0, 0, 0, 1);
+            yield return new WaitForSeconds(0.3f);
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             yield break;
         }

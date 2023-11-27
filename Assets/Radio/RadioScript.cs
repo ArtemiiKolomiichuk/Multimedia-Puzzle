@@ -6,6 +6,9 @@ public class RadioScript : MonoBehaviour
 {
     [SerializeField]
     public List<AudioClip> audioClips;
+    [SerializeField]
+    [TextArea(3, 10)]
+    internal List<string> songTitles;
     public int clipNum = 0;
     public bool isStopped = true;
     private AudioSource audioSource;
@@ -127,7 +130,7 @@ public class RadioScript : MonoBehaviour
     }
     private void resetName()
     {
-        if(textMeshPro!=null) textMeshPro.text = audioSource.clip.name;
+        if(textMeshPro!=null) textMeshPro.text = songTitles[clipNum];
     }
 
     private bool isPlaying()
