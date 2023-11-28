@@ -35,6 +35,7 @@ public class Tile : MonoBehaviour
         if (isPinMoving)
             return;
         isPinMoving = true;
+        GetComponent<AudioSource>().volume = 0.3f;
         if (pin == null)
         {
             var pin = Instantiate(BoardController.Instance.pin);
@@ -77,6 +78,7 @@ public class Tile : MonoBehaviour
         if (pin == null)
             return;
         pin.SetActive(true);
+        GetComponent<AudioSource>().volume = 0.3f;
         GetComponent<AudioSource>().clip = pinAudio;
         GetComponent<AudioSource>().Play();
         StartCoroutine(MovePin(pin, true));
@@ -168,6 +170,10 @@ public class Tile : MonoBehaviour
         else
         {
             StartCoroutine(LerpMaterialColor(intermidiateMaterial, secondMaterial.color, 1.1f, secondMaterial));
+        }
+        if(isOceanic)
+        {
+            GetComponent<AudioSource>().volume = 0.8f;
         }
         GetComponent<AudioSource>().Play();
         flipped = true;
