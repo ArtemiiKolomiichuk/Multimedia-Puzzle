@@ -1,2 +1,4 @@
 # Multimedia-Puzzle
-Unity 2022.3.10f1
+Project for NaUKMA 'Multimedia technologies' course.
+
+3D assets: https://syntystore.com/products/polygon-prototype-pack 
